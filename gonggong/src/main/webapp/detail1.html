@@ -1,0 +1,89 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<title>국회 자료 상세 검색</title>
+<script type="text/javascript"
+	src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js">
+</script>
+<script type="text/javascript">
+//encodeURI : 2바이트 코드 또는 특수문자를 유니코드로 인코딩함.
+       let pageno = 1
+  const url = "http://apis.data.go.kr/9720000/searchservice/detail"
+	          + "?serviceKey=B5kkHB7AXuf%2BhTnw9rCsQNdO3OZxO6aAf08sgvz0ZBCoIJddJO6P7gigfzQqaLJwOStfyvzxVpsuQg54i4mEZw%3D%3D"
+	          + "&pageno="+pageno		  
+	          + "&displaylines=10"
+	          + "&dbname=일반도서"
+	          + "&option=" + encodeURI("발행년도,2000|발행년도,2010")	  
+		      + "&search="
+		      
+		      $(function() {
+		      	$("#btn").click(function(){
+		      		let k = $("#kind").val() //자료구분
+		      		let f = $("#find").val() //자료명
+		      		$.ajax(url+k+","+f,{
+		      			success : function(data) {
+		      				//data : xml 객체 루트노드(문서노드).
+		      				console.log(data)
+		      				//$(data).find("total") : jquery를 이용하여 태그 선택
+		      				//                        루트노드로 부터 total이라는 태그 선택해라
+		      				//total : total 태그의 내용을 정수형으로 저장
+		      				//isNaN : 숫자가 아니니? 숫자면 false 숫자가 아니면 true
+		      				let total = parseInt($(data).find("total").text()) //문서 노드로 부터 total이라는 함수를 찾아라
+		      				if(isNaN($(data).find("total").text())) {
+		      					document.queryselecy("#result").innerHTML="검색 데이터 없음"
+		      					return 
+		      				}
+		      				//숫자인 경우(total 값이 존재) : 검색을 한 상태
+		      				let html ="<table><caption>전체조회건수:"+total+"</caption>"
+		      				//$(data).find("recode") : recode 태그들. 배열로 리턴
+		      				//                         recode 태그가 여러개임
+		      				$(data).find("recode").each(function() {
+		      					html +="<tr>"
+		  						 $(this).find("item").each(function() { // $(this) : 현재 실행중인 recode 태그 한 개
+		  							 html += "<th>" +$(this).find("name").text()+"</th>"//$(this).find("name") : 검색 데이터의 카테고리 이름
+		  						})
+		  						html += "</tr>"
+		  						return false //each 반복문을 빠짐(break)
+		  					})
+		      				$(data).find("recode").each(function() {
+		      					html += "<tr>"
+		      					$(this).find("item").each(function() {
+		      				//	    let value = $(this).find("value").text()	
+		      			  	html +="<td>"+$(this).find("value").text()+"</td>"
+		      			  //      html +=
+		  						
+		  					})
+		  					html +="</tr>"	
+		      			})
+		      			
+		      			$("#result").html(html+"</table>")
+		      		},
+		      		error : function(e) {
+		      			alert("공공데이터 수신 오류 :" +e.status)
+		      			
+		      		}
+		  				
+		  			})
+		      		
+		      	})
+		  		
+		  	})
+
+</script>
+</head>
+<body>
+	<select id="kind">
+		<option>전체</option>
+		<option>자료명</option>
+		<option>저자</option>
+		<option>발행자</option>
+		<option>키워드</option>
+		<option>청구기호</option>
+	</select>
+	<input type="text" id="find" size="50">
+	<button id="btn">검색</button>
+	<hr>
+	<div id="result"></div>
+</body>
+</html>
