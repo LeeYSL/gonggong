@@ -15,12 +15,15 @@ import org.jsoup.select.Elements;
 public class Detail {
 	
 	public static void main(String[] args) throws IOException {
-		String gongurl = "http://apis.data.go.kr/9720000/searchservice/detail";
+		String gongurl = "https://apis.data.go.kr/9720000/searchservice/detail?pageno=1";
 		String search = URLEncoder.encode("자료명,홍길동", "UTF-8"); // URLEncoder.encode : 2바이트 문자열을 UTF-8 형식으로 인코딩
 		StringBuilder urlBuilder = new StringBuilder(gongurl);
 		urlBuilder.append(
 				"?serviceKey=uzGmTh2miQpGCJ4ddl6FCQhvBgi90BGXhB26jFRFt5uPRbQ8BSG6KdDJjz37Lx6epByemmYO1ESh1xUJb9pSxw%3D%3D");
 		urlBuilder.append("&displaylines=10&search=" + search);
+		urlBuilder.append("&dbname="+URLEncoder.encode("일반도서","UTF-8"));
+	//	urlBuilder.append(false)
+	//	urlBuilder.append(false)
 		URL url = new URL(urlBuilder.toString());
 		HttpURLConnection conn = (HttpURLConnection) url.openConnection(); // 공공데이터에 접속
 		conn.setRequestMethod("GET");
@@ -49,8 +52,8 @@ public class Detail {
 		for (Element r : recodes) { // r : recode 태그 한 개
 			// r.select("item") : recode 태그의 하위 item 태그들
 			for (Element i : r.select("item")) {
-				String name = r.select("name").html();
-				String value = r.select("value").html();
+				String name = i.select("name").html();
+				String value = i.select("value").html();
 				System.out.print(name + ":" + value +"\t");
 
 			}

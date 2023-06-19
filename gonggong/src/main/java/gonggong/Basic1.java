@@ -13,7 +13,7 @@ import org.jsoup.select.Elements;
 
 public class Basic1 {
 	public static void main(String[] args) throws IOException {
-		String gongurl = "http://apis.data.go.kr/9720000/searchservice/basic";
+		String gongurl = "https://apis.data.go.kr/9720000/searchservice/basic";
 		String search = URLEncoder.encode("자료명,홍길동", "UTF-8"); // URLEncoder.encode : 2바이트 문자열을 UTF-8 형식으로 인코딩
 		StringBuilder urlBuilder = new StringBuilder(gongurl);
 		urlBuilder.append(
@@ -47,8 +47,8 @@ public class Basic1 {
 		for (Element r : recodes) { // r : recode 태그 한 개
 			// r.select("item") : recode 태그의 하위 item 태그들
 			for (Element i : r.select("item")) {
-				String name = r.select("name").html();
-				String value = r.select("value").html();
+				String name = i.select("name").html();
+				String value =i.select("value").html();
 				System.out.print(name + ":" + value +"\t");
 
 			}
